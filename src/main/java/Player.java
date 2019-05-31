@@ -9,7 +9,7 @@ public class Player {
     public Player (String name) {
         this.name = name;
         score = 0;
-        usedWords = new HashSet<String>();
+        usedWords = new HashSet<>();
     }
 
     public int getScore() {

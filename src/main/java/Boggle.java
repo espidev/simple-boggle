@@ -1,5 +1,8 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+/*
+ * Due: June 12th
+ */
 
 public class Boggle {
     public static final int BOARD_SIZE = 5;
@@ -8,7 +11,21 @@ public class Boggle {
     public static int minimumWordLength = 3;
 
     public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
-    public static List<Player> players = new ArrayList<Player>();
+    public static List<Player> players = new ArrayList<>();
+
+    public static HashSet<String> validWords = new HashSet<>();
+
+    public static void generateBoard() {
+        List<String> dice = Arrays.asList("AAAFRS", "AAEEEE", "AAFIRS", "ADENNN", "AEEEEM", "AEEGMU", "AEGMNN", "AFIRSY", "BJKQXZ", "CCNSTW", "CEIILT", "CEILPT", "CEIPST", "DDLNOR", "DHHLOR", "DHHNOT", "DHLNOR", "EIIITT", "EMOTTT", "ENSSSU", "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU");
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                int ind = (int) (Math.random() * dice.size());
+                board[i][j] = dice.get(ind).charAt((int)(Math.random() * dice.get(ind).length()));
+                dice.remove(ind);
+            }
+        }
+    }
 
     public static boolean recursiveBoggleFind(int x, int y, boolean[][] visited, String build, String str) {
         if (build.length() >= str.length()) return false;
@@ -16,6 +33,7 @@ public class Boggle {
 
         for (int[] direct : boardDirection) {
             int nx = x + direct[0], ny = y + direct[1];
+            if (nx >= BOARD_SIZE || nx < 0 || ny >= BOARD_SIZE || ny < 0) continue;
             if (!visited[nx][ny]) {
                 String temp = build + board[nx][ny];
                 if (temp.equals(str)) return true;
@@ -36,7 +54,18 @@ public class Boggle {
         return false;
     }
 
+    public static int getGuessWordsPoints(List<String> list) {
+        int score = 0;
+        for (String word : list) {
+            if (word.length() >= minimumWordLength && validWords.contains(word) && findBoggleWord(word))
+                score += word.length();
+        }
+        return score;
+    }
+
     public static void main(String[] args) {
+        System.out.println("Welcome to Boggle!");
+
 
     }
 
