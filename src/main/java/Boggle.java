@@ -16,7 +16,7 @@ public class Boggle {
     public static HashSet<String> validWords = new HashSet<>();
 
     public static void generateBoard() {
-        List<String> dice = Arrays.asList("AAAFRS", "AAEEEE", "AAFIRS", "ADENNN", "AEEEEM", "AEEGMU", "AEGMNN", "AFIRSY", "BJKQXZ", "CCNSTW", "CEIILT", "CEILPT", "CEIPST", "DDLNOR", "DHHLOR", "DHHNOT", "DHLNOR", "EIIITT", "EMOTTT", "ENSSSU", "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU");
+        ArrayList<String> dice = new ArrayList<>(Arrays.asList("AAAFRS", "AAEEEE", "AAFIRS", "ADENNN", "AEEEEM", "AEEGMU", "AEGMNN", "AFIRSY", "BJKQXZ", "CCNSTW", "CEIILT", "CEILPT", "CEIPST", "DDLNOR", "DHHLOR", "DHHNOT", "DHLNOR", "EIIITT", "EMOTTT", "ENSSSU", "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU"));
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -63,10 +63,14 @@ public class Boggle {
         return score;
     }
 
+    public static void startGame() {
+        generateBoard();
+        BoggleGUI.stage.setScene(GameScene.getScene());
+    }
+
     public static void main(String[] args) {
         System.out.println("Welcome to Boggle!");
-
-
+        BoggleGUI.main(args);
     }
 
 }
