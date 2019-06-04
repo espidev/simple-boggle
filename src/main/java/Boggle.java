@@ -27,17 +27,17 @@ public class Boggle {
         }
     }
 
-    public static boolean recursiveBoggleFind(int x, int y, boolean[][] visited, String build, String str) {
-        if (build.length() >= str.length()) return false;
+    public static boolean recursiveBoggleFind(int x, int y, boolean[][] visited, int searchIndex, String str) {
+        if (searchIndex == str.length()) return true;
         visited[x][y] = true;
 
         for (int[] direct : boardDirection) {
             int nx = x + direct[0], ny = y + direct[1];
-            if (nx >= BOARD_SIZE || nx < 0 || ny >= BOARD_SIZE || ny < 0) continue;
-            if (!visited[nx][ny]) {
-                String temp = build + board[nx][ny];
-                if (temp.equals(str)) return true;
-                recursiveBoggleFind(nx, ny, visited, temp, str);
+            if (nx >= BOARD_SIZE || nx < 0 || ny >= BOARD_SIZE || ny < 0) continue; // check out of bounds
+
+            // check if not visited, correct character, and the recursive search returns true
+            if (!visited[nx][ny] && (board[nx][ny] == str.charAt(searchIndex)) && recursiveBoggleFind(nx, ny, visited, searchIndex+1, str)) {
+                return true;
             }
         }
         return false;
