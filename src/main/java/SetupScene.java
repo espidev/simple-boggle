@@ -4,9 +4,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-
 public class SetupScene {
     public static Scene getScene() {
+        BoggleGUI.stage.setTitle("Boggle Setup");
+
         Text mode = new Text();
         mode.setText("Which mode are you playing?");
         Button single = new Button("Singleplayer"), multi = new Button("2 Players");
@@ -19,6 +20,8 @@ public class SetupScene {
     }
     public static Scene setupPlayers() {
         VBox pane = new VBox();
+
+        pane.setAlignment(Pos.CENTER);
         return new Scene(pane, 256, 256);
     }
 }

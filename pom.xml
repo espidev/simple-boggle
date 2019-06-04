@@ -8,6 +8,7 @@
     <artifactId>simple-boggle</artifactId>
     <version>1.0</version>
 
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -32,6 +33,7 @@
             <version>11</version>
             <classifier>mac</classifier>
         </dependency>
+
     </dependencies>
 
     <build>

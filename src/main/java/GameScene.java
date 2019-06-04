@@ -1,8 +1,9 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 
 public class GameScene {
@@ -10,8 +11,14 @@ public class GameScene {
     public static GridPane gridPane = new GridPane();
 
     public static Scene getScene() {
+        BoggleGUI.stage.setTitle("Boggle");
+
         gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
+        for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
+            gridPane.getColumnConstraints().add(new ColumnConstraints(30));
+            gridPane.getRowConstraints().add(new RowConstraints(30));
+        }
+        //gridPane.setPadding(new Insets(30, 30, 30, 30));
         gridPane.setAlignment(Pos.CENTER);
         updateBoard();
         return new Scene(gridPane, 500, 500);

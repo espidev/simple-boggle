@@ -8,6 +8,8 @@ import javafx.scene.text.Text;
 public class MainScene {
 
     public static Scene getScene() {
+        BoggleGUI.stage.setTitle("Boggle Game");
+
         Text t = new Text();
         t.setFont(new Font(18));
         t.setText("Welcome to Boggle!");
