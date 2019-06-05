@@ -48,7 +48,7 @@ public class Boggle {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
                 visited[i][j] = true;
-                if (recursiveBoggleFind(i, j, visited, "" + board[i][j], str)) return true;
+                if (recursiveBoggleFind(i, j, visited, 0, str)) return true;
             }
         }
         return false;

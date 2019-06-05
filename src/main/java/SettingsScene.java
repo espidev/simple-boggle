@@ -21,7 +21,7 @@ public class SettingsScene {
         pane.add(new Text("Number of players:"), 1, 0);
         pane.add(new Text("Minimum word length:"), 2, 0);
 
-        Button save = new Button
+        Button save = new Button();
 
         return new Scene(pane, 256, 256);
     }
