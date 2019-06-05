@@ -14,13 +14,13 @@ public class MainScene {
         t.setFont(new Font(18));
         t.setText("Welcome to Boggle!");
 
-        Button play = new Button("Play!");
+        Button play = new Button("Play!"), settings = new Button("Settings");
         play.setDefaultButton(true);
         play.setOnMouseClicked((e) -> {
+            SetupScene.currentPlayer = 0;
             BoggleGUI.stage.setScene(SetupScene.getScene());
         });
-        Button settings = new Button("Settings");
-        settings.setAlignment(Pos.BOTTOM_RIGHT);
+        settings.setOnMouseClicked(e -> BoggleGUI.stage.setScene(SettingsScene.getScene()));
 
         VBox pane = new VBox(t, new Text(), play, new Text(), settings);
         pane.setAlignment(Pos.CENTER);

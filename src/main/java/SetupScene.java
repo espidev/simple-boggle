@@ -1,25 +1,39 @@
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 public class SetupScene {
+
+    static int currentPlayer = 0;
+
     public static Scene getScene() {
-        BoggleGUI.stage.setTitle("Boggle Setup");
+        BoggleGUI.stage.setTitle("Setup player " + (currentPlayer+1));
 
-        Text mode = new Text();
-        mode.setText("Which mode are you playing?");
-        Button single = new Button("Singleplayer"), multi = new Button("2 Players");
+        GridPane pane = new GridPane();
 
-        multi.setOnMouseClicked(e -> Boggle.startGame());
+        pane.setPadding(new Insets(10, 10, 10, 10));
+        pane.setVgap(5);
+        pane.setHgap(5);
 
-        VBox pane = new VBox(mode, new Text(), single, new Text(), multi);
-        pane.setAlignment(Pos.CENTER);
-        return new Scene(pane, 256, 256);
-    }
-    public static Scene setupPlayers() {
-        VBox pane = new VBox();
+        TextField name = new TextField();
+        pane.add(new Text("Name:"), 0, 0);
+        pane.add(name, 0, 1);
+
+        Button save = new Button("Save");
+        save.setOnMouseClicked(e -> {
+            Boggle.players.add(new Player(name.getCharacters().toString()));
+            if (currentPlayer == Boggle.numberOfPlayers-1) {
+                Boggle.startGame();
+            } else {
+                currentPlayer++;
+                BoggleGUI.stage.setScene(SetupScene.getScene());
+            }
+        });
+        pane.add(save, 1, 1);
 
         pane.setAlignment(Pos.CENTER);
         return new Scene(pane, 256, 256);
