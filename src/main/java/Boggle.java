@@ -1,3 +1,4 @@
+//import
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -6,14 +7,15 @@ import java.util.*;
  * Due: June 12th
  */
 
-public class Boggle {
+//the class boggle 
+public class Boggle { 
     public static final int BOARD_SIZE = 5;
-    public static final int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
+    public static final int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}; //the possible direction that the program can move on the board 
 
     public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0;
 
-    public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
-    public static List<Player> players = new ArrayList<>();
+    public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE]; //declare and set the 2d array for the baord
+    public static List<Player> players = new ArrayList<>(); //declare and set the array list for the players 
 
     public static HashSet<String> validWords = new HashSet<>();
 
