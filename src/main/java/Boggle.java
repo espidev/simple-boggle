@@ -10,10 +10,10 @@ public class Boggle {
     public static final int BOARD_SIZE = 5;
     public static final int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
 
-    public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0;
+    public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0, maxTimePerTurn = 20;
 
     public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
-    public static List<Player> players = new ArrayList<>();
+    public static ArrayList<Player> players = new ArrayList<>();
 
     public static HashSet<String> validWords = new HashSet<>();
 
@@ -21,7 +21,7 @@ public class Boggle {
         return players.get(currentPlayerIndex);
     }
 
-    public static void generateBoard() {
+    private static void generateBoard() {
         ArrayList<String> dice = new ArrayList<>(Arrays.asList("AAAFRS", "AAEEEE", "AAFIRS", "ADENNN", "AEEEEM", "AEEGMU", "AEGMNN", "AFIRSY", "BJKQXZ", "CCNSTW", "CEIILT", "CEILPT", "CEIPST", "DDLNOR", "DHHLOR", "DHHNOT", "DHLNOR", "EIIITT", "EMOTTT", "ENSSSU", "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU"));
 
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -33,7 +33,7 @@ public class Boggle {
         }
     }
 
-    public static boolean recursiveBoggleFind(int x, int y, boolean[][] visited, int searchIndex, String str) {
+    private static boolean recursiveBoggleFind(int x, int y, boolean[][] visited, int searchIndex, String str) {
         if (searchIndex == str.length()) return true;
         visited[x][y] = true;
 
@@ -49,19 +49,20 @@ public class Boggle {
         return false;
     }
 
-    public static boolean findBoggleWord(String str) {
+    private static boolean findBoggleWord(String str) {
         str = str.toUpperCase();
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
                 visited[i][j] = true;
+                // start at neighbouring character
                 if (recursiveBoggleFind(i, j, visited, 0, str)) return true;
             }
         }
         return false;
     }
 
-    public static int getGuessWordsPoints(String word) {
+    private static int getGuessWordsPoints(String word) {
         int score = 0;
         if (word.length() >= minimumWordLength && validWords.contains(word) && findBoggleWord(word)) {
             score = word.length();
@@ -70,16 +71,32 @@ public class Boggle {
     }
 
     public static void handleTurn(String word) {
-        int points = getGuessWordsPoints(word);
         Player p = getCurrentPlayer();
+        if (p.isUsedWord(word)) {
+            System.out.println("Word already used!");
+            // TODO try again without used word
+            return;
+        }
+
+        int points = getGuessWordsPoints(word);
+
         p.setScore(p.getScore() + points);
+        p.addUsedWord(word);
+
         System.out.println("Handling " + p.getName() + "'s turn.");
         System.out.println("Score: " + p.getScore());
+
         if (p.getScore() >= pointsToPlay) {
-            // TODO win
+            winGame(p);
         } else {
             nextTurn();
         }
+    }
+
+    public static void winGame(Player p) {
+        System.out.println(p.getName() + " won!");
+        BoggleGUI.stage.setScene(WinScene.getScene(p));
+        players.clear();
     }
 
     public static void nextTurn() {

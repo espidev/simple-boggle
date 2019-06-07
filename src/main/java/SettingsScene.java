@@ -17,7 +17,8 @@ public class SettingsScene {
 
         TextField pointsToPlay = new TextField(""+Boggle.pointsToPlay),
                 numberofPlayers = new TextField(""+Boggle.numberOfPlayers),
-                minimumWordLength = new TextField(""+Boggle.minimumWordLength);
+                minimumWordLength = new TextField(""+Boggle.minimumWordLength),
+                maxTimePerTurn = new TextField(""+Boggle.maxTimePerTurn);
 
         pane.add(new Text("Points to play:"), 0, 0);
         pane.add(pointsToPlay, 1, 0);
@@ -25,17 +26,20 @@ public class SettingsScene {
         pane.add(numberofPlayers, 1, 2);
         pane.add(new Text("Minimum word length:"), 0, 4);
         pane.add(minimumWordLength, 1, 4);
+        pane.add(new Text("Max seconds per turn:"), 0, 6);
+        pane.add(maxTimePerTurn, 1, 6);
 
         Button save = new Button("Save");
 
         save.setOnMouseClicked(e -> {
             Boggle.minimumWordLength = Integer.parseInt(minimumWordLength.getCharacters().toString());
             Boggle.numberOfPlayers = Integer.parseInt(numberofPlayers.getCharacters().toString());
-            Boggle.minimumWordLength = Integer.parseInt(minimumWordLength.getCharacters().toString());
+            Boggle.pointsToPlay = Integer.parseInt(pointsToPlay.getCharacters().toString());
+            Boggle.maxTimePerTurn = Integer.parseInt(maxTimePerTurn.getCharacters().toString());
             BoggleGUI.stage.setScene(MainScene.getScene());
         });
 
-        pane.add(save, 1, 6);
+        pane.add(save, 1, 8);
 
         return new Scene(pane, 256, 256);
     }

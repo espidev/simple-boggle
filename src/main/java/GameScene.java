@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,8 +21,36 @@ public class GameScene {
             gridPane.getRowConstraints().add(new RowConstraints(50));
         }
 
-        gridPane.add(new Text(Boggle.getCurrentPlayer().getName() +  ": " + Boggle.getCurrentPlayer().getScore()), 0, 0);
-        gridPane.add(new Text("0"), Boggle.BOARD_SIZE-1, 0);
+        gridPane.add(new Text(Boggle.getCurrentPlayer().getName() + ": " + Boggle.getCurrentPlayer().getScore()), 0, 0);
+
+        Text countdown = new Text("" + Boggle.maxTimePerTurn);
+        gridPane.add(countdown, Boggle.BOARD_SIZE - 1, 0);
+
+        // countdown
+        new Thread(() -> {
+            String currentPlayerName = Boggle.getCurrentPlayer().getName();
+            for (int i = Boggle.maxTimePerTurn; i >= 0; i--) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (!currentPlayerName.equals(Boggle.getCurrentPlayer().getName())) {
+                        return;
+                    }
+                } catch (IndexOutOfBoundsException ignored) {
+                }
+
+                countdown.setText("" + i);
+            }
+            Platform.runLater(() -> {
+                // TODO cancel turn
+                Boggle.nextTurn();
+            });
+        }).start();
 
         gridPane.setAlignment(Pos.CENTER);
         updateBoard();
@@ -29,19 +58,19 @@ public class GameScene {
         TextField word = new TextField();
         Button submit = new Button("Submit");
         submit.setDefaultButton(true);
-        gridPane.add(new Text("Word:"), 0, Boggle.BOARD_SIZE+1);
-        gridPane.add(word, 1, Boggle.BOARD_SIZE+1);
-        gridPane.add(submit, Boggle.BOARD_SIZE-1, Boggle.BOARD_SIZE+1);
+        gridPane.add(new Text("Word:"), 0, Boggle.BOARD_SIZE + 1);
+        gridPane.add(word, 1, Boggle.BOARD_SIZE + 1);
+        gridPane.add(submit, Boggle.BOARD_SIZE - 1, Boggle.BOARD_SIZE + 1);
 
         submit.setOnMouseClicked(e -> Boggle.handleTurn(word.getCharacters().toString()));
 
         return new Scene(gridPane, 600, 600);
     }
 
-    public static void updateBoard() {
+    private static void updateBoard() {
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
-                gridPane.add(new Text(""+Boggle.board[i][j]), i, j+1);
+                gridPane.add(new Text("" + Boggle.board[i][j]), i, j + 1);
             }
         }
     }

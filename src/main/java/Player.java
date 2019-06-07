@@ -1,6 +1,6 @@
 import java.util.HashSet;
 
-public class Player {
+public class Player implements Comparable<Player> {
 
     private int score;
     private String name;
@@ -36,4 +36,8 @@ public class Player {
         usedWords.add(word);
     }
 
+    @Override
+    public int compareTo(Player p) {
+        return getScore() - p.getScore();
+    }
 }
