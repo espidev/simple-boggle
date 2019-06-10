@@ -38,8 +38,7 @@ public class SetupScene {
 
         pane.setAlignment(Pos.CENTER);
 
-        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
-
+        BoggleGUI.initSceneTheme(pane);
         return new Scene(pane, 350, 256);
     }
 }

@@ -32,13 +32,6 @@
             <version>11</version>
             <classifier>mac</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>jmetro</artifactId>
-            <version>5.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/jmetro-5.5.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>

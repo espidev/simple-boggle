@@ -12,9 +12,10 @@ public class MainScene {
     public static Scene getScene() {
         BoggleGUI.stage.setTitle("Boggle Game");                                                    // naming the window Boggle Game
 
-        Text t = new Text();                                                                        // creating text box
-        t.setFont(new Font(18));                                                                    // setting font size
-        t.setText("Welcome to Boggle!");                                                            // giving user a welcome message
+        VBox pane = new VBox();
+        pane.setAlignment(Pos.CENTER);
+
+        Text t = new Text("Welcome to Boggle!");                                                                        // creating text box
 
         Button play = new Button("Play!"), settings = new Button("Settings");                       // creating 2 buttons
         play.setOnAction(e -> {
@@ -22,11 +23,11 @@ public class MainScene {
             BoggleGUI.stage.setScene(SetupScene.getScene());
         });
         play.setDefaultButton(true);
-        settings.setOnMouseClicked(e -> BoggleGUI.stage.setScene(SettingsScene.getScene()));        // change scene if Settings button is pressed
+        settings.setOnAction(e -> BoggleGUI.stage.setScene(SettingsScene.getScene()));        // change scene if Settings button is pressed
 
-        VBox pane = new VBox(t, new Text(), play, new Text(), settings);                            // creating verticle GUI layout for text, play button, and settings button
-        pane.setAlignment(Pos.CENTER);                                                              // aligning GUI to center
-        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
+        pane.getChildren().addAll(t, new Text(), play, new Text(), settings);
+
+        BoggleGUI.initSceneTheme(pane);
         return new Scene(pane, 256, 256);                                                           // setting the size of the scene as 256x256 pixels
     }
 

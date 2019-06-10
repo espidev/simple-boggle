@@ -5,13 +5,17 @@
 
 .header{
     -fx-font-size: 42pt;
-    -fx-font-family: "Segoe UI Light";
+    -fx-font-family: Nunito, "Segoe UI Light";
     -fx-text-fill: black;
+}
+
+.root {
+    -fx-font: 12pt Nunito;
 }
 
 .item-title{
     -fx-font-size: 11pt;
-    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-family: Nunito, "Segoe UI Semibold";
     -fx-text-fill: black;
     -fx-opacity: 0.6;
 
@@ -30,8 +34,8 @@
 
     -fx-background-color: #e91e63;
 
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
+    -fx-font-family: Nunito, "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 12pt;
     -fx-text-fill: white;
     -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);
 }
@@ -613,7 +617,7 @@
 
 .list-spinner .text
 {
-    -fx-font-family: "Segoe UI"
+    -fx-font-family: Nunito, "Segoe UI"
 }
 
 .list-spinner:disabled {

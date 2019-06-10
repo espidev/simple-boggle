@@ -32,8 +32,7 @@ public class WinScene {
 
         pane.add(ok, 1, i*2);
 
-        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
-
+        BoggleGUI.initSceneTheme(pane);
         return new Scene(pane, 256, 256);
     }
 }
