@@ -24,7 +24,7 @@ public class SetupScene {
         pane.add(name, 0, 1);
 
         Button save = new Button("Save");
-        save.setOnMouseClicked(e -> {
+        save.setOnAction(e -> {
             Boggle.players.add(new Player(name.getCharacters().toString()));
             if (currentPlayer == Boggle.numberOfPlayers-1) {
                 Boggle.startGame();
@@ -33,6 +33,7 @@ public class SetupScene {
                 BoggleGUI.stage.setScene(SetupScene.getScene());
             }
         });
+        save.setDefaultButton(true);
         pane.add(save, 1, 1);
 
         pane.setAlignment(Pos.CENTER);

@@ -27,7 +27,8 @@ public class WinScene {
 
         Button ok = new Button("Okay");
 
-        ok.setOnMouseClicked(e -> BoggleGUI.stage.setScene(MainScene.getScene()));
+        ok.setOnAction(e -> BoggleGUI.stage.setScene(MainScene.getScene()));
+        ok.setDefaultButton(true);
 
         pane.add(ok, 1, i*2);
 

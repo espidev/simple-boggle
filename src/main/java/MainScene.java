@@ -17,10 +17,11 @@ public class MainScene {
         t.setText("Welcome to Boggle!");                                                            // giving user a welcome message
 
         Button play = new Button("Play!"), settings = new Button("Settings");                       // creating 2 buttons
-        play.setOnMouseClicked((e) -> {                                                             // checking mouse button click
+        play.setOnAction(e -> {
             SetupScene.currentPlayer = 0;                                                           // starts the setup with the first player
-            BoggleGUI.stage.setScene(SetupScene.getScene());                                        // change scene if Play! button is pressed
+            BoggleGUI.stage.setScene(SetupScene.getScene());
         });
+        play.setDefaultButton(true);
         settings.setOnMouseClicked(e -> BoggleGUI.stage.setScene(SettingsScene.getScene()));        // change scene if Settings button is pressed
 
         VBox pane = new VBox(t, new Text(), play, new Text(), settings);                            // creating verticle GUI layout for text, play button, and settings button

@@ -84,7 +84,8 @@ public class GameScene {
         // bottom elements
         TextField word = new TextField();
         Button submit = new Button("Submit");
-        submit.setOnMouseClicked(e -> Boggle.handleTurn(word.getCharacters().toString()));
+        submit.setOnAction(e -> Boggle.handleTurn(word.getCharacters().toString()));
+        submit.setDefaultButton(true);
         HBox bottom = new HBox(new Text("Word:"), word, submit);
         container.setBottom(bottom);
         bottom.setPadding(new Insets(15, 12, 15, 12));

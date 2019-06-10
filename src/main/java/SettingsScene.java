@@ -31,13 +31,14 @@ public class SettingsScene {
 
         Button save = new Button("Save");
 
-        save.setOnMouseClicked(e -> {
+        save.setOnAction(e -> {
             Boggle.minimumWordLength = Integer.parseInt(minimumWordLength.getCharacters().toString());
             Boggle.numberOfPlayers = Integer.parseInt(numberofPlayers.getCharacters().toString());
             Boggle.pointsToPlay = Integer.parseInt(pointsToPlay.getCharacters().toString());
             Boggle.maxTimePerTurn = Integer.parseInt(maxTimePerTurn.getCharacters().toString());
             BoggleGUI.stage.setScene(MainScene.getScene());
         });
+        save.setDefaultButton(true);
 
         pane.add(save, 1, 8);
 
