@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 
 public class GameScene {
 
-    public static GridPane gridPane = new GridPane();
+    private static GridPane gridPane = new GridPane();
 
     public static Scene getScene() {
         BoggleGUI.stage.setTitle("Boggle");
@@ -47,8 +47,8 @@ public class GameScene {
                 countdown.setText("" + i);
             }
             Platform.runLater(() -> {
-                // TODO cancel turn
-                Boggle.nextTurn();
+                if (!Boggle.players.isEmpty())
+                    Boggle.nextTurn();
             });
         }).start();
 
@@ -57,12 +57,13 @@ public class GameScene {
 
         TextField word = new TextField();
         Button submit = new Button("Submit");
-        submit.setDefaultButton(true);
         gridPane.add(new Text("Word:"), 0, Boggle.BOARD_SIZE + 1);
         gridPane.add(word, 1, Boggle.BOARD_SIZE + 1);
         gridPane.add(submit, Boggle.BOARD_SIZE - 1, Boggle.BOARD_SIZE + 1);
 
         submit.setOnMouseClicked(e -> Boggle.handleTurn(word.getCharacters().toString()));
+
+        gridPane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
 
         return new Scene(gridPane, 600, 600);
     }

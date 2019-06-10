@@ -36,6 +36,9 @@ public class SetupScene {
         pane.add(save, 1, 1);
 
         pane.setAlignment(Pos.CENTER);
-        return new Scene(pane, 256, 256);
+
+        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
+
+        return new Scene(pane, 350, 256);
     }
 }

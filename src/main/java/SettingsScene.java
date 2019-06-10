@@ -41,6 +41,8 @@ public class SettingsScene {
 
         pane.add(save, 1, 8);
 
+        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
+
         return new Scene(pane, 256, 256);
     }
 }

@@ -17,7 +17,6 @@ public class MainScene {
         t.setText("Welcome to Boggle!");                                                            // giving user a welcome message
 
         Button play = new Button("Play!"), settings = new Button("Settings");                       // creating 2 buttons
-        play.setDefaultButton(true);                                                                //
         play.setOnMouseClicked((e) -> {                                                             // checking mouse button click
             SetupScene.currentPlayer = 0;                                                           // starts the setup with the first player
             BoggleGUI.stage.setScene(SetupScene.getScene());                                        // change scene if Play! button is pressed
@@ -26,6 +25,7 @@ public class MainScene {
 
         VBox pane = new VBox(t, new Text(), play, new Text(), settings);                            // creating verticle GUI layout for text, play button, and settings button
         pane.setAlignment(Pos.CENTER);                                                              // aligning GUI to center
+        pane.getStylesheets().add(WinScene.class.getResource("jmetro.css").toExternalForm());
         return new Scene(pane, 256, 256);                                                           // setting the size of the scene as 256x256 pixels
     }
 
