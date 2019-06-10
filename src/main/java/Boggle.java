@@ -11,6 +11,7 @@ public class Boggle {
 
     // game variables (configurable)
     public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0, maxTimePerTurn = 20;
+    public static boolean highlightAsYouType = true;
 
     public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE]; // the characters in each spot on the board
     public static ArrayList<Player> players = new ArrayList<>(); // the players in the game

@@ -135,7 +135,7 @@
     -fx-background-color: white;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-border-color: #bababa;
+    -fx-border-color: #e91e63;
     -fx-border-width: 2px;
     -fx-border-style: solid;
     -fx-padding: 1;
@@ -153,18 +153,15 @@
     -fx-background-color: white;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-border-color: black, #bababa;
-    -fx-border-width: 1, 2;
-    -fx-border-style: segments(1, 1), solid;
-    -fx-border-insets: -3, 0;
+    -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);
 }
 
 .check-box:selected .mark {
-    -fx-background-color: black;
+    -fx-background-color: #e91e63;
 }
 
 .check-box:indeterminate .mark {
-    -fx-background-color: black;
+    -fx-background-color: #e91e63;
     -fx-background-insets: 2.8;
     -fx-padding:7px;
     -fx-shape: null;

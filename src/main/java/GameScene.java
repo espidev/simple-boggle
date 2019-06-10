@@ -4,6 +4,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -91,7 +93,10 @@ public class GameScene {
     public static Scene getScene() {
         BoggleGUI.stage.setTitle("Boggle");
 
-        // container
+        // complete container for stacking layers
+        StackPane stackContainer = new StackPane();
+
+        // main game container
         BorderPane container = new BorderPane();
 
         charGrid = new GridPane();
@@ -141,7 +146,9 @@ public class GameScene {
         // input field for word
         TextField word = new TextField();
         // highlight letters that player is typing
-        word.setOnKeyTyped(e -> highlightOnType(word.getText()));
+        if (Boggle.highlightAsYouType) {
+            word.setOnKeyTyped(e -> highlightOnType(word.getText()));
+        }
 
         Button submit = new Button("Submit");
         // when player enters word
@@ -149,8 +156,17 @@ public class GameScene {
         submit.setDefaultButton(true);
         bottom.getChildren().addAll(word, submit);
 
-        BoggleGUI.initSceneTheme(container);
-        return new Scene(container, 500, 500);
+        // ~~~~~~
+        // On top layer for alerts and modal stuff
+
+        ImageView blur = new ImageView();
+        blur.setEffect(new BoxBlur(10, 10, 3));
+
+        // ~~~~~~
+
+        stackContainer.getChildren().addAll(container, blur);
+        BoggleGUI.initSceneTheme(stackContainer);
+        return new Scene(stackContainer, 500, 500);
     }
 
     private static void renderBoard() {

@@ -1,6 +1,7 @@
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -19,6 +20,8 @@ public class SettingsScene {
                 numberofPlayers = new TextField(""+Boggle.numberOfPlayers),
                 minimumWordLength = new TextField(""+Boggle.minimumWordLength),
                 maxTimePerTurn = new TextField(""+Boggle.maxTimePerTurn);
+        CheckBox highlightAsYouType = new CheckBox();
+        highlightAsYouType.setSelected(Boggle.highlightAsYouType);
 
         pane.add(new Text("Points to play:"), 0, 0);
         pane.add(pointsToPlay, 1, 0);
@@ -28,6 +31,8 @@ public class SettingsScene {
         pane.add(minimumWordLength, 1, 4);
         pane.add(new Text("Max seconds per turn:"), 0, 6);
         pane.add(maxTimePerTurn, 1, 6);
+        pane.add(new Text("Highlight as you type:"), 0, 8);
+        pane.add(highlightAsYouType, 1, 8);
 
         Button save = new Button("Save");
 
@@ -36,13 +41,14 @@ public class SettingsScene {
             Boggle.numberOfPlayers = Integer.parseInt(numberofPlayers.getCharacters().toString());
             Boggle.pointsToPlay = Integer.parseInt(pointsToPlay.getCharacters().toString());
             Boggle.maxTimePerTurn = Integer.parseInt(maxTimePerTurn.getCharacters().toString());
+            Boggle.highlightAsYouType = highlightAsYouType.isSelected();
             BoggleGUI.stage.setScene(MainScene.getScene());
         });
         save.setDefaultButton(true);
 
-        pane.add(save, 1, 8);
+        pane.add(save, 1, 10);
 
         BoggleGUI.initSceneTheme(pane);
-        return new Scene(pane, 300, 256);
+        return new Scene(pane, 300, 300);
     }
 }
