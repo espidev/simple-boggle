@@ -13,6 +13,29 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/*
+   Assignment: Boggle Program
+
+   Copyright 2019 Devin, Raz, Felix
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+/*
+ * Class: GameScene
+ * Description: Deals with the logic behind displaying the ingame GUI, timers, buttons, rendering board, etc.
+ */
+
 public class GameScene {
 
     private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 500;
@@ -146,6 +169,7 @@ public class GameScene {
         }
     }
 
+    // returns an instance of the game screen based on the current player
     public static Scene getScene() {
         BoggleGUI.stage.setTitle("Boggle");
 
@@ -214,7 +238,7 @@ public class GameScene {
             word.setOnKeyReleased(e -> highlightOnType(word.getText()));
         }
 
-        Button submit = new Button("Submit");
+        Button submit = new Button("Enter");
         // when player enters word
         submit.setOnAction(e -> {
             if (!gameFreeze) { // if the game is not frozen at this point (modal is not shown)
@@ -235,7 +259,7 @@ public class GameScene {
         });
 
         // if the correct number of rounds passes, add shake board button
-        if (currentRound > Boggle.roundsUntilAllowShakeBoard) {
+        if (Boggle.allowShakeBoard && currentRound > Boggle.roundsUntilAllowShakeBoard) {
             bottom.getChildren().addAll(word, submit, shakeBoard);
         } else {
             bottom.getChildren().addAll(word, submit);
