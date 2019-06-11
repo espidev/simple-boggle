@@ -2,11 +2,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/*
- * Due: June 12th
- */
-
 public class Boggle {
+    
+    // sets board size
     public static final int BOARD_SIZE = 5;
 
     // game variables (configurable)
