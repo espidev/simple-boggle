@@ -2,6 +2,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+
+/*
+ * TODO LIST
+ * Shake up the board stuff
+ * Singleplayer counter should be total, and end
+ * Add modal when word is not a word
+ * Word is not found, prevent pressing enter
+ * Comments, documentation
+ * Multiple rounds option (up to 100)
+ * Wordlist include as resource
+ */
+
 public class Boggle {
     
     // sets board size
@@ -84,13 +96,12 @@ public class Boggle {
         // checks
         if (p.isUsedWord(word)) {
             System.out.println("Word already used!");
-            // TODO try again without used word
+            GameScene.showModal("Word already used!\nTry again!", 2, ()->{});
             return;
         }
 
         int points = getGuessWordsPoints(word);
-
-        // TODO show letters that were used for the word on GUI
+        if (points == 0) return;
 
         p.setScore(p.getScore() + points);
         p.addUsedWord(word);

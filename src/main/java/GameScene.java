@@ -1,16 +1,9 @@
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -22,6 +15,8 @@ public class GameScene {
 
     private static final int WINDOW_WIDTH = 500, WINDOW_HEIGHT = 500;
 
+    public static int countdownSeconds;
+
     private static GridPane charGrid = new GridPane(); // grid pane, storing the GUI for the board
     private static Text[][] charRepGrid = new Text[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE]; // grid of text objects (each character)
 
@@ -29,7 +24,7 @@ public class GameScene {
     private static Text modalText = new Text();
     private static StackPane stackContainer = new StackPane();
 
-    public static void showModal(String message, int seconds) {
+    public static void showModal(String message, int seconds, Runnable runAfter) {
         modalText.setText(message);
         stackContainer.getChildren().add(modal);
         new Thread(() -> {
@@ -39,6 +34,7 @@ public class GameScene {
                 e.printStackTrace();
             }
             Platform.runLater(() -> stackContainer.getChildren().remove(modal));
+            runAfter.run();
         }).start();
     }
 
@@ -46,7 +42,7 @@ public class GameScene {
         // countdown
         new Thread(() -> {
             String currentPlayerName = Boggle.getCurrentPlayer().getName();
-            for (int i = Boggle.maxTimePerTurn; i >= 0; i--) {
+            for (GameScene.countdownSeconds = Boggle.maxTimePerTurn; countdownSeconds >= 0; countdownSeconds--) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -57,7 +53,7 @@ public class GameScene {
                         return;
                 } catch (IndexOutOfBoundsException ignored) {
                 }
-                countdown.setText("Time Left: " + i);
+                countdown.setText("Time Left: " + countdownSeconds);
             }
             Platform.runLater(() -> {
                 if (!Boggle.players.isEmpty())
@@ -73,7 +69,6 @@ public class GameScene {
         }
 
         int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
-
         boolean found = false;
 
         // loop over possible directions on the board
@@ -89,25 +84,32 @@ public class GameScene {
         return found;
     }
 
+    // method called when a user types a letter
+    // takes in the full text as parameter
     private static void highlightOnType(String word) {
         boolean[][] flagged = new boolean[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE];
+
+        // if the typed word is longer than 0 characters (prevent out of bounds)
         if (word.length() != 0) {
-            word = word.toUpperCase();
+            word = word.toUpperCase(); // ignore case
+            // loop over each character
             for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
                 for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
-                    if (Boggle.board[i][j] == word.charAt(0)) {
+                    if (Boggle.board[i][j] == word.charAt(0)) { // check if the first character is the word's first character
+                        // recursively flag characters
                         recursiveFlagWord(i, j, 1, word, flagged);
                     }
-                }
+                   }
             }
         }
 
+        // set effects for flagged characters
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
-                if (flagged[i][j]) {
+                if (flagged[i][j]) { // if it was flagged, add shadow
                     charRepGrid[i][j].setStyle("-fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);");
                     charRepGrid[i][j].setFill(Color.web("#e91e63"));
-                } else {
+                } else { // otherwise, set to black
                     charRepGrid[i][j].setStyle("-fx-effect: none;");
                     charRepGrid[i][j].setFill(Color.BLACK);
                 }
@@ -146,7 +148,6 @@ public class GameScene {
         // countdown timer
         Text countdown = new Text("Time Left: " + Boggle.maxTimePerTurn);
         countdown.setFill(Color.WHITE);
-        startTimer(countdown);
         right.getChildren().add(countdown);
 
         // show player list
@@ -156,7 +157,12 @@ public class GameScene {
         right.getChildren().add(title);
 
         for (Player p : Boggle.players) {
-            Text t = new Text(p.getName() + ": " + p.getScore());
+            Text t;
+            if (p.getName().equals(Boggle.getCurrentPlayer().getName())) {
+                t = new Text(p.getName() + ": " + p.getScore() + " ←");
+            } else {
+                t = new Text(p.getName() + ": " + p.getScore());
+            }
             t.setFill(Color.WHITE);
             right.getChildren().add(t);
         }
@@ -186,22 +192,25 @@ public class GameScene {
 
         modal = new BorderPane();
         Rectangle r = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        r.setFill(Color.BLACK);
-        r.setOpacity(0.7);
+        r.setFill(Color.web("#e91e63"));
+        r.setOpacity(0.8);
         modalText = new Text();
-        modalText.setFill(Color.BLACK); // TODO WHITE
-        modal.getChildren().addAll(r, modalText);
+        modalText.setFill(Color.WHITE);
+        modalText.setFont(new Font("Nunito", 24));
+        modal.getChildren().addAll(r);
+        modal.setCenter(modalText);
 
         // ~~~~~~
 
-
         stackContainer.getChildren().addAll(container);
-        showModal("lol", 1); // TODO REMOVE
+        // show player's turn
+        showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 1, () -> startTimer(countdown));
+
         BoggleGUI.initSceneTheme(stackContainer);
         return new Scene(stackContainer, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
-
+    // get the current board and render it on GUI
     private static void renderBoard() {
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             for (int j = 0; j < Boggle.BOARD_SIZE; j++) {

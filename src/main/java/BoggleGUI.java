@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
 public class BoggleGUI  extends Application {
@@ -22,6 +23,9 @@ public class BoggleGUI  extends Application {
             System.exit(0);
         });
         stage.show();
+
+        AudioClip sound = new AudioClip(BoggleGUI.class.getResource("indoors.wav").toExternalForm());
+        sound.play();
     }
 
     public static void main(String[] args) {
