@@ -20,7 +20,7 @@ public class SetupScene {
         pane.setHgap(5);
 
         TextField name = new TextField();
-        pane.add(new Text("Name:"), 0, 0);
+        pane.add(new Text("Type Player " + (currentPlayer+1) + "'s Name:"), 0, 0);
         pane.add(name, 0, 1);
 
         Button save = new Button("Save");

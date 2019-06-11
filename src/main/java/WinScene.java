@@ -7,7 +7,7 @@ import javafx.scene.text.Text;
 
 import java.util.Collections;
 
-public class WinScene {
+class WinScene {
     public static Scene getScene(Player p) {
         BoggleGUI.stage.setTitle("Boggle: " + p.getName() + " won!");
         GridPane pane = new GridPane();

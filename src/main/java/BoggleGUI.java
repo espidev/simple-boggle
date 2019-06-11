@@ -8,9 +8,16 @@ public class BoggleGUI  extends Application {
 
     public static Stage stage;
 
+    // takes in a javafx node and themes it, and adds our font
     public static void initSceneTheme(Pane s) {
         s.getStylesheets().add("https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900");
-        s.getStylesheets().add(BoggleGUI.class.getResource("jmetro.css").toExternalForm());
+        s.getStylesheets().add(BoggleGUI.class.getResource("theme.css").toExternalForm());
+    }
+
+    // helper method to play a sound
+    public static void playSound(String name) {
+        AudioClip sound = new AudioClip(BoggleGUI.class.getResource(name).toExternalForm());
+        sound.play();
     }
 
     @Override
@@ -24,8 +31,7 @@ public class BoggleGUI  extends Application {
         });
         stage.show();
 
-        AudioClip sound = new AudioClip(BoggleGUI.class.getResource("indoors.wav").toExternalForm());
-        sound.play();
+        playSound("indoors.wav");
     }
 
     public static void main(String[] args) {

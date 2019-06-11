@@ -19,6 +19,7 @@ public class MainScene {
 
         Button play = new Button("Play!"), settings = new Button("Settings");                       // creating 2 buttons
         play.setOnAction(e -> {
+            BoggleGUI.playSound("bell.wav");
             SetupScene.currentPlayer = 0;                                                           // starts the setup with the first player
             BoggleGUI.stage.setScene(SetupScene.getScene());
         });

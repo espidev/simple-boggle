@@ -17,71 +17,74 @@ public class GameScene {
 
     private static final int WINDOW_WIDTH = 500, WINDOW_HEIGHT = 500;
 
-    public static int countdownSeconds;
+    public static int countdownSeconds; // value on the timer clock
+    public static boolean gameFreeze = false; // whether or not input should be taken (word)
 
     private static GridPane charGrid = new GridPane(); // grid pane, storing the GUI for the board
     private static Text[][] charRepGrid = new Text[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE]; // grid of text objects (each character)
 
+    // modal objects
     private static BorderPane modal = new BorderPane();
     private static Text modalText = new Text();
-    private static StackPane stackContainer = new StackPane();
 
+    private static StackPane stackContainer = new StackPane(); // root game container
+
+    // show the message on a pink rectangle in front of the game
     public static void showModal(String message, int seconds, Runnable runAfter) {
+        gameFreeze = true;
         modalText.setText(message);
         FadeTransition ft = new FadeTransition(Duration.millis(500), modal);
         ft.setFromValue(0);
         ft.setToValue(1.0);
         ft.play();
         stackContainer.getChildren().add(modal);
+
         new Thread(() -> {
-            try {
-                Thread.sleep(1000 * seconds);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Boggle.threadSleep(1000*seconds);
             ft.setFromValue(1);
             ft.setToValue(0);
             ft.play();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Boggle.threadSleep(500);
             Platform.runLater(() -> stackContainer.getChildren().remove(modal));
+            gameFreeze = false;
             runAfter.run();
         }).start();
     }
 
+    // helper method to start the countdown timer (on top right of GUI)
     private static void startTimer(Text countdown) {
-        // countdown
+        // countdown on separate thread
         new Thread(() -> {
             String currentPlayerName = Boggle.getCurrentPlayer().getName();
+
+            // loop seconds down
             for (GameScene.countdownSeconds = Boggle.maxTimePerTurn; countdownSeconds >= 0; countdownSeconds--) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
+                Boggle.threadSleep(1000); // wait for a second
+                try { // check if the current pass has ended already
                     if (!currentPlayerName.equals(Boggle.getCurrentPlayer().getName()))
                         return;
-                } catch (IndexOutOfBoundsException ignored) {
-                }
+                } catch (IndexOutOfBoundsException ignored) {}
+                // change text
                 countdown.setText("Time Left: " + countdownSeconds);
             }
+            // countdown has ended
             Platform.runLater(() -> {
-                if (!Boggle.players.isEmpty())
+                if (!Boggle.players.isEmpty()) { // go to the next turn if the game hasn't ended
                     Boggle.nextTurn();
+                }
             });
         }).start();
     }
 
+    // helper recursive method to find and flag characters of word that player is currently typing
     private static boolean recursiveFlagWord(int x, int y, int searchIndex, String str, boolean[][] flagged) {
+        // if the current processed word length is already the same length of word to search
         if (searchIndex == str.length()) {
-            flagged[x][y] = true;
-            return true;
+            flagged[x][y] = true; // flag last character
+            return true; // return to prevent going out of bounds
         }
 
+        // directions to move over (x, y)
         int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
         boolean found = false;
 
@@ -90,8 +93,10 @@ public class GameScene {
             int nx = x + direct[0], ny = y + direct[1];
             if (nx >= Boggle.BOARD_SIZE || nx < 0 || ny >= Boggle.BOARD_SIZE || ny < 0) continue; // check out of bounds
 
+            // if the character at this new spot is the same character as the one in the word we are searching for
+            // if further recursive calls find the complete word
             if ((Boggle.board[nx][ny] == str.charAt(searchIndex)) && recursiveFlagWord(nx, ny, searchIndex + 1, str, flagged)) {
-                flagged[x][y] = true;
+                flagged[x][y] = true; // flag this spot pink
                 found = true;
             }
         }
@@ -140,18 +145,19 @@ public class GameScene {
         // main game container
         BorderPane container = new BorderPane();
 
+        // init grid of characters
         charGrid = new GridPane();
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             charGrid.getColumnConstraints().add(new ColumnConstraints(50));
             charGrid.getRowConstraints().add(new RowConstraints(50));
         }
-
         charGrid.setAlignment(Pos.CENTER);
         renderBoard();
 
         // center the grid
         container.setCenter(charGrid);
 
+        // ~~~~~~
         // right side elements
         VBox right = new VBox();
         container.setRight(right);
@@ -170,17 +176,20 @@ public class GameScene {
         title.setFill(Color.WHITE);
         right.getChildren().add(title);
 
+        // loop over to players and add to player list
         for (Player p : Boggle.players) {
             Text t;
-            if (p.getName().equals(Boggle.getCurrentPlayer().getName())) {
+            if (p.getName().equals(Boggle.getCurrentPlayer().getName())) { // if it's this player's turn
                 t = new Text(p.getName() + ": " + p.getScore() + " ←");
-            } else {
+                t.setFont(Font.font("Nunito", FontWeight.BOLD, 18));
+            } else { // normal player
                 t = new Text(p.getName() + ": " + p.getScore());
             }
             t.setFill(Color.WHITE);
             right.getChildren().add(t);
         }
 
+        // ~~~~~~
         // bottom elements
         HBox bottom = new HBox(new Text("Word:"));
         bottom.setPadding(new Insets(15, 12, 15, 12));
@@ -197,12 +206,16 @@ public class GameScene {
 
         Button submit = new Button("Submit");
         // when player enters word
-        submit.setOnAction(e -> Boggle.handleTurn(word.getCharacters().toString()));
-        submit.setDefaultButton(true);
+        submit.setOnAction(e -> {
+            if (!gameFreeze) { // if the game is not frozen at this point (modal is not shown)
+                Boggle.handleTurn(word.getCharacters().toString()); // send the word to be processed for points
+            }
+        });
+        submit.setDefaultButton(true); // pressing enter will trigger this button
         bottom.getChildren().addAll(word, submit);
 
         // ~~~~~~
-        // On top layer for alerts and modal stuff
+        // On top layer for alerts (modal)
 
         modal = new BorderPane();
         Rectangle r = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -217,7 +230,7 @@ public class GameScene {
         // ~~~~~~
 
         stackContainer.getChildren().addAll(container);
-        // show player's turn
+        // show player's turn modal
         showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 2, () -> startTimer(countdown));
 
         BoggleGUI.initSceneTheme(stackContainer);
@@ -226,8 +239,10 @@ public class GameScene {
 
     // get the current board and render it on GUI
     private static void renderBoard() {
+        // loop over each board character
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
+                // set the grid spot to the specified char
                 charRepGrid[i][j] = new Text("" + Boggle.board[i][j]);
                 charGrid.add(charRepGrid[i][j], i, j);
             }

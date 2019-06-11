@@ -20,8 +20,8 @@ public class Boggle {
     public static final int BOARD_SIZE = 5;
 
     // game variables (configurable)
-    public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0, maxTimePerTurn = 20;
-    public static boolean highlightAsYouType = true;
+    public static int minimumWordLength = 3, pointsToPlay = 20, numberOfPlayers = 2, currentPlayerIndex = 0, maxTimePerTurn = 20, roundsUntilAllowShakeBoard = 2;
+    public static boolean highlightAsYouType = true, allowShakeBoard = true;
 
     public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE]; // the characters in each spot on the board
     public static ArrayList<Player> players = new ArrayList<>(); // the players in the game
@@ -103,6 +103,8 @@ public class Boggle {
         int points = getGuessWordsPoints(word);
         if (points == 0) return;
 
+        BoggleGUI.playSound("shine.wav");
+
         p.setScore(p.getScore() + points);
         p.addUsedWord(word);
 
@@ -117,6 +119,7 @@ public class Boggle {
     }
 
     public static void winGame(Player p) { //When a player wins the game
+        BoggleGUI.playSound("impact.wav");
         System.out.println(p.getName() + " won!");
         BoggleGUI.stage.setScene(WinScene.getScene(p));
         players.clear();
@@ -138,16 +141,26 @@ public class Boggle {
     public static void main(String[] args) {
         System.out.println("Welcome to Boggle!");
 
-        // index words
+        // index words in our hashset
         try {
             Scanner s = new Scanner(new File("./wordlist.txt"));
-            while (s.hasNext()) validWords.add(s.nextLine());
+            while (s.hasNext())
+                validWords.add(s.nextLine());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         // start GUI
         BoggleGUI.main(args);
+    }
+
+    // helper function to do thread waiting
+    public static void threadSleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
