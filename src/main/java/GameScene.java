@@ -1,21 +1,46 @@
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class GameScene {
 
+    private static final int WINDOW_WIDTH = 500, WINDOW_HEIGHT = 500;
+
     private static GridPane charGrid = new GridPane(); // grid pane, storing the GUI for the board
     private static Text[][] charRepGrid = new Text[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE]; // grid of text objects (each character)
+
+    private static BorderPane modal = new BorderPane();
+    private static Text modalText = new Text();
+    private static StackPane stackContainer = new StackPane();
+
+    public static void showModal(String message, int seconds) {
+        modalText.setText(message);
+        stackContainer.getChildren().add(modal);
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000*seconds);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Platform.runLater(() -> stackContainer.getChildren().remove(modal));
+        }).start();
+    }
 
     private static void startTimer(Text countdown) {
         // countdown
@@ -56,7 +81,7 @@ public class GameScene {
             int nx = x + direct[0], ny = y + direct[1];
             if (nx >= Boggle.BOARD_SIZE || nx < 0 || ny >= Boggle.BOARD_SIZE || ny < 0) continue; // check out of bounds
 
-            if (!flagged[nx][ny] && (Boggle.board[nx][ny] == str.charAt(searchIndex)) && recursiveFlagWord(nx, ny, searchIndex + 1, str, flagged)) {
+            if ((Boggle.board[nx][ny] == str.charAt(searchIndex)) && recursiveFlagWord(nx, ny, searchIndex + 1, str, flagged)) {
                 flagged[x][y] = true;
                 found = true;
             }
@@ -94,7 +119,7 @@ public class GameScene {
         BoggleGUI.stage.setTitle("Boggle");
 
         // complete container for stacking layers
-        StackPane stackContainer = new StackPane();
+        stackContainer = new StackPane();
 
         // main game container
         BorderPane container = new BorderPane();
@@ -159,15 +184,23 @@ public class GameScene {
         // ~~~~~~
         // On top layer for alerts and modal stuff
 
-        ImageView blur = new ImageView();
-        blur.setEffect(new BoxBlur(10, 10, 3));
+        modal = new BorderPane();
+        Rectangle r = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        r.setFill(Color.BLACK);
+        r.setOpacity(0.7);
+        modalText = new Text();
+        modalText.setFill(Color.BLACK); // TODO WHITE
+        modal.getChildren().addAll(r, modalText);
 
         // ~~~~~~
 
-        stackContainer.getChildren().addAll(container, blur);
+
+        stackContainer.getChildren().addAll(container);
+        showModal("lol", 1); // TODO REMOVE
         BoggleGUI.initSceneTheme(stackContainer);
-        return new Scene(stackContainer, 500, 500);
+        return new Scene(stackContainer, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
+
 
     private static void renderBoard() {
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {

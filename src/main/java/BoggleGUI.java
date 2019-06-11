@@ -1,10 +1,7 @@
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class BoggleGUI  extends Application {
 
@@ -20,6 +17,10 @@ public class BoggleGUI  extends Application {
         BoggleGUI.stage = stage;
         stage.setTitle("Boggle Game");
         stage.setScene(MainScene.getScene());
+        stage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
         stage.show();
     }
 

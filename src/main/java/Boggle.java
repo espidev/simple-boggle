@@ -79,8 +79,11 @@ public class Boggle {
         return score;
     }
 
-    public static void handleTurn(String word) { //Handle the turn by displaying the user the appropriate message
+    // executed once the player clicks the submit button in the game scene
+    public static void handleTurn(String word) {
         Player p = getCurrentPlayer();
+
+        // checks
         if (p.isUsedWord(word)) {
             System.out.println("Word already used!");
             // TODO try again without used word
