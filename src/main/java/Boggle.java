@@ -5,7 +5,6 @@ import java.util.*;
 
 /*
  * TODO LIST
- * Shake up the board stuff
  * Singleplayer counter should be total, and end
  * Add modal when word is not a word
  * Word is not found, prevent pressing enter
@@ -34,7 +33,7 @@ public class Boggle {
     }
 
     // generate the board randomly using the specified dice
-    private static void generateBoard() {
+    public static void generateBoard() {
         // different dice that are possible
         ArrayList<String> dice = new ArrayList<>(Arrays.asList("AAAFRS", "AAEEEE", "AAFIRS", "ADENNN", "AEEEEM", "AEEGMU", "AEGMNN", "AFIRSY", "BJKQXZ", "CCNSTW", "CEIILT", "CEILPT", "CEIPST", "DDLNOR", "DHHLOR", "DHHNOT", "DHLNOR", "EIIITT", "EMOTTT", "ENSSSU", "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU"));
 
@@ -127,14 +126,20 @@ public class Boggle {
 
     public static void nextTurn() {  //go to the next turn of the next player
         currentPlayerIndex++;
-        if( currentPlayerIndex == numberOfPlayers) currentPlayerIndex = 0;
+        if( currentPlayerIndex == numberOfPlayers) {
+            GameScene.currentRound++;
+            currentPlayerIndex = 0;
+        }
         System.out.println("Switching to " + getCurrentPlayer().getName() + "'s turn.");
         BoggleGUI.stage.setScene(GameScene.getScene()); //Set the stage for the next player
     }
 
     public static void startGame() {
         generateBoard();
+
         currentPlayerIndex = 0;
+        GameScene.currentRound = 1;
+
         BoggleGUI.stage.setScene(GameScene.getScene());
     }
 

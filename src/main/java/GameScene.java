@@ -15,9 +15,10 @@ import javafx.util.Duration;
 
 public class GameScene {
 
-    private static final int WINDOW_WIDTH = 500, WINDOW_HEIGHT = 500;
+    private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 500;
 
     public static int countdownSeconds; // value on the timer clock
+    public static int currentRound = 1;
     public static boolean gameFreeze = false; // whether or not input should be taken (word)
 
     private static GridPane charGrid = new GridPane(); // grid pane, storing the GUI for the board
@@ -40,7 +41,7 @@ public class GameScene {
         stackContainer.getChildren().add(modal);
 
         new Thread(() -> {
-            Boggle.threadSleep(1000*seconds);
+            Boggle.threadSleep(1000 * seconds);
             ft.setFromValue(1);
             ft.setToValue(0);
             ft.play();
@@ -63,7 +64,8 @@ public class GameScene {
                 try { // check if the current pass has ended already
                     if (!currentPlayerName.equals(Boggle.getCurrentPlayer().getName()))
                         return;
-                } catch (IndexOutOfBoundsException ignored) {}
+                } catch (IndexOutOfBoundsException ignored) {
+                }
                 // change text
                 countdown.setText("Time Left: " + countdownSeconds);
             }
@@ -77,12 +79,14 @@ public class GameScene {
     }
 
     // helper recursive method to find and flag characters of word that player is currently typing
-    private static boolean recursiveFlagWord(int x, int y, int searchIndex, String str, boolean[][] flagged) {
+    private static boolean recursiveFlagWord(int x, int y, int searchIndex, String str, boolean[][] flagged, boolean[][] visited) {
         // if the current processed word length is already the same length of word to search
         if (searchIndex == str.length()) {
             flagged[x][y] = true; // flag last character
             return true; // return to prevent going out of bounds
         }
+
+        visited[x][y] = true;
 
         // directions to move over (x, y)
         int[][] boardDirection = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
@@ -95,18 +99,22 @@ public class GameScene {
 
             // if the character at this new spot is the same character as the one in the word we are searching for
             // if further recursive calls find the complete word
-            if ((Boggle.board[nx][ny] == str.charAt(searchIndex)) && recursiveFlagWord(nx, ny, searchIndex + 1, str, flagged)) {
+            // and has not been visited
+            if (!visited[nx][ny] && (Boggle.board[nx][ny] == str.charAt(searchIndex)) && recursiveFlagWord(nx, ny, searchIndex + 1, str, flagged, visited)) {
                 flagged[x][y] = true; // flag this spot pink
                 found = true;
             }
         }
+        // backtrack out (save memory)
+        visited[x][y] = false;
         return found;
     }
 
     // method called when a user types a letter
     // takes in the full text as parameter
     private static void highlightOnType(String word) {
-        boolean[][] flagged = new boolean[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE];
+        boolean[][] flagged = new boolean[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE],
+                visited = new boolean[Boggle.BOARD_SIZE][Boggle.BOARD_SIZE];
 
         // if the typed word is longer than 0 characters (prevent out of bounds)
         if (word.length() != 0) {
@@ -116,7 +124,7 @@ public class GameScene {
                 for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
                     if (Boggle.board[i][j] == word.charAt(0)) { // check if the first character is the word's first character
                         // recursively flag characters
-                        recursiveFlagWord(i, j, 1, word, flagged);
+                        recursiveFlagWord(i, j, 1, word, flagged, visited);
                     }
                 }
             }
@@ -126,9 +134,11 @@ public class GameScene {
         for (int i = 0; i < Boggle.BOARD_SIZE; i++) {
             for (int j = 0; j < Boggle.BOARD_SIZE; j++) {
                 if (flagged[i][j]) { // if it was flagged, add shadow
+                    charRepGrid[i][j].setText("" + Boggle.board[i][j]);
                     charRepGrid[i][j].setStyle("-fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);");
                     charRepGrid[i][j].setFill(Color.web("#e91e63"));
                 } else { // otherwise, set to black
+                    charRepGrid[i][j].setText("" + Boggle.board[i][j]);
                     charRepGrid[i][j].setStyle("-fx-effect: none;");
                     charRepGrid[i][j].setFill(Color.BLACK);
                 }
@@ -161,7 +171,7 @@ public class GameScene {
         // right side elements
         VBox right = new VBox();
         container.setRight(right);
-        right.setPadding(new Insets(10));
+        right.setPadding(new Insets(15));
         right.setSpacing(8);
         right.setStyle("-fx-text-fill: white; -fx-background-color: #e91e63; -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);");
 
@@ -212,7 +222,24 @@ public class GameScene {
             }
         });
         submit.setDefaultButton(true); // pressing enter will trigger this button
-        bottom.getChildren().addAll(word, submit);
+
+        Button shakeBoard = new Button("Shake Board");
+        // when player wants to shake up board
+        shakeBoard.setOnAction(e -> {
+            if (!gameFreeze) {
+                currentRound = 1; // reset round timer
+                bottom.getChildren().remove(shakeBoard); // remove button
+                Boggle.generateBoard(); // generate a new board
+                highlightOnType(word.getText()); // render the new board
+            }
+        });
+
+        // if the correct number of rounds passes, add shake board button
+        if (currentRound > Boggle.roundsUntilAllowShakeBoard) {
+            bottom.getChildren().addAll(word, submit, shakeBoard);
+        } else {
+            bottom.getChildren().addAll(word, submit);
+        }
 
         // ~~~~~~
         // On top layer for alerts (modal)
