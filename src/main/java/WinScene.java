@@ -32,7 +32,11 @@ import java.util.Collections;
 
 class WinScene {
     public static Scene getScene(Player p) {
-        BoggleGUI.stage.setTitle("Boggle: " + p.getName() + " won!");
+        if (Boggle.players.size() != 1) { // multiplayer header
+            BoggleGUI.stage.setTitle("Boggle: " + p.getName() + " won!");
+        } else { // singleplayer header
+            BoggleGUI.stage.setTitle("Singleplayer: " + Boggle.getCurrentPlayer().getScore() + " points!");
+        }
 
         // initialize grid layout
         GridPane pane = new GridPane();
@@ -44,16 +48,17 @@ class WinScene {
         // sort players by their score (custom comparator)
         Boggle.players.sort(Collections.reverseOrder());
 
-        int i = 1;
-
-        pane.add(new Text(Boggle.getCurrentPlayer().getScore() + " points! Good job!"), 0, 0);
+        int i;
 
         if (Boggle.players.size() == 1) { // singleplayer mode
+            i = 1;
+            pane.add(new Text(Boggle.getCurrentPlayer().getScore() + " points! Good job!"), 0, 0);
             for (String word : Boggle.getCurrentPlayer().getUsedWords()) { // display words that player entered
                 pane.add(new Text(word), 0, i*2);
                 i++;
             }
         } else { // multiplayer mode
+            i = 0;
             for (; i < Boggle.players.size(); i++) { // loop over each player and add their winning to the screen
                 pane.add(new Text("" + (i + 1)), 0, i * 2);
                 pane.add(new Text(Boggle.players.get(i).getName() + " (" + Boggle.players.get(i).getScore() + ")"), 1, i * 2);

@@ -167,8 +167,8 @@ public class Boggle {
 
         BoggleGUI.playSound("shine.wav");
 
-        p.setScore(p.getScore() + points);
-        p.addUsedWord(word);
+        p.setScore(p.getScore() + points); // increase score
+        p.addUsedWord(word); // add word to used words
 
         System.out.println("Handling " + p.getName() + "'s turn.");
         System.out.println("Score: " + p.getScore());
@@ -207,6 +207,7 @@ public class Boggle {
         // reset variables
         currentPlayerIndex = 0;
         GameScene.currentRound = 1;
+        GameScene.firstRun = true;
 
         // start the first player's turn
         BoggleGUI.stage.setScene(GameScene.getScene());

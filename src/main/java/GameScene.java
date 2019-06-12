@@ -39,6 +39,7 @@ import javafx.util.Duration;
 public class GameScene {
 
     private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 500;
+    public static boolean firstRun = false;
 
     public static int countdownSeconds; // value on the timer clock
     public static int currentRound = 1;
@@ -214,9 +215,12 @@ public class GameScene {
         right.setStyle("-fx-text-fill: white; -fx-background-color: #e91e63; -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);");
 
         // countdown timer
-        Text countdown = new Text("Time Left: " + Boggle.maxTimePerTurn);
+        if (Boggle.players.size() != 1 || firstRun) { // reset the countdown if not singleplayer mode
+            countdownSeconds = Boggle.maxTimePerTurn;
+        }
+        Text countdown = new Text("Time Left: " + countdownSeconds);
         countdown.setFill(Color.WHITE);
-        right.getChildren().add(countdown);
+        right.getChildren().add(countdown); // add countdown clock to GUI
 
         // show player list
         Text title = new Text("Players");
@@ -296,9 +300,14 @@ public class GameScene {
 
         stackContainer.getChildren().addAll(container);
         // show player's turn modal
-        showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 2, () -> startTimer(countdown));
+        if (Boggle.players.size() != 1) { // don't show if singleplayer
+            showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 2, () -> startTimer(countdown));
+        } else if (firstRun) { // singleplayer start countdown
+            startTimer(countdown);
+        }
 
         BoggleGUI.initSceneTheme(stackContainer);
+        firstRun = false;
         return new Scene(stackContainer, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
