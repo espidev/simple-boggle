@@ -96,7 +96,7 @@ public class Boggle {
         // checks
         if (p.isUsedWord(word)) {
             System.out.println("Word already used!");
-            GameScene.showModal("Word already used!\nTry again!", 2, ()->{});
+            GameScene.showModal("Word already used!\nTry again!", 1, ()->{});
             return;
         }
 

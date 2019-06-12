@@ -1,3 +1,4 @@
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,6 +11,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class GameScene {
 
@@ -26,10 +28,22 @@ public class GameScene {
 
     public static void showModal(String message, int seconds, Runnable runAfter) {
         modalText.setText(message);
+        FadeTransition ft = new FadeTransition(Duration.millis(500), modal);
+        ft.setFromValue(0);
+        ft.setToValue(1.0);
+        ft.play();
         stackContainer.getChildren().add(modal);
         new Thread(() -> {
             try {
-                Thread.sleep(1000*seconds);
+                Thread.sleep(1000 * seconds);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ft.setFromValue(1);
+            ft.setToValue(0);
+            ft.play();
+            try {
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -99,7 +113,7 @@ public class GameScene {
                         // recursively flag characters
                         recursiveFlagWord(i, j, 1, word, flagged);
                     }
-                   }
+                }
             }
         }
 
@@ -178,7 +192,7 @@ public class GameScene {
         TextField word = new TextField();
         // highlight letters that player is typing
         if (Boggle.highlightAsYouType) {
-            word.setOnKeyTyped(e -> highlightOnType(word.getText()));
+            word.setOnKeyReleased(e -> highlightOnType(word.getText()));
         }
 
         Button submit = new Button("Submit");
@@ -204,7 +218,7 @@ public class GameScene {
 
         stackContainer.getChildren().addAll(container);
         // show player's turn
-        showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 1, () -> startTimer(countdown));
+        showModal(Boggle.getCurrentPlayer().getName() + "'s Turn", 2, () -> startTimer(countdown));
 
         BoggleGUI.initSceneTheme(stackContainer);
         return new Scene(stackContainer, WINDOW_WIDTH, WINDOW_HEIGHT);
