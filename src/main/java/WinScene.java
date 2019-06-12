@@ -2,6 +2,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
@@ -50,28 +51,38 @@ class WinScene {
 
         int i;
 
-        if (Boggle.players.size() == 1) { // singleplayer mode
-            i = 1;
-            pane.add(new Text(Boggle.getCurrentPlayer().getScore() + " points! Good job!"), 0, 0);
-            for (String word : Boggle.getCurrentPlayer().getUsedWords()) { // display words that player entered
-                pane.add(new Text(word), 0, i*2);
-                i++;
-            }
-        } else { // multiplayer mode
-            i = 0;
-            for (; i < Boggle.players.size(); i++) { // loop over each player and add their winning to the screen
-                pane.add(new Text("" + (i + 1)), 0, i * 2);
-                pane.add(new Text(Boggle.players.get(i).getName() + " (" + Boggle.players.get(i).getScore() + ")"), 1, i * 2);
-            }
-        }
-
         // add okay button
         Button ok = new Button("Okay");
 
         ok.setOnAction(e -> BoggleGUI.stage.setScene(MainScene.getScene())); // return to main screen when clicked
         ok.setDefaultButton(true);
 
-        pane.add(ok, 1, i * 2);
+        if (Boggle.players.size() == 1) { // singleplayer mode
+            pane.add(new Text(Boggle.getCurrentPlayer().getScore() + " points! Good job!"), 0, 1);
+            pane.add(new Text("Your words:"), 0, 2);
+
+            StringBuilder build = new StringBuilder();
+
+            for (String word : Boggle.getCurrentPlayer().getUsedWords()) { // display words that player entered
+                build.append(word).append("\n");
+            }
+
+            // add scrollable list for words
+            ScrollPane scroll = new ScrollPane();
+            scroll.setFitToWidth(true);
+            scroll.setFitToHeight(true);
+            scroll.setContent(new Text(build.toString()));
+
+            pane.add(scroll, 0, 3);
+            pane.add(ok, 1, 4);
+        } else { // multiplayer mode
+            i = 0;
+            for (; i < Boggle.players.size(); i++) { // loop over each player and add their winning to the screen
+                pane.add(new Text("" + (i + 1)), 0, i * 2);
+                pane.add(new Text(Boggle.players.get(i).getName() + " (" + Boggle.players.get(i).getScore() + ")"), 1, i * 2);
+            }
+            pane.add(ok, 1, i * 2);
+        }
 
         BoggleGUI.initSceneTheme(pane);
         return new Scene(pane, 350, 300);
