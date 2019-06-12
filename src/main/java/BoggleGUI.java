@@ -30,7 +30,7 @@ import javafx.util.Duration;
  * Description: Entry point for JFX GUI, setting stage, utilities for GUI related tasks
  */
 
-public class BoggleGUI  extends Application {
+public class BoggleGUI extends Application {
 
     public static Stage stage;
 
@@ -57,14 +57,18 @@ public class BoggleGUI  extends Application {
         });
         stage.show(); // show the main GUI
 
-        // play game song
 
+        // play game song
         AudioClip sound = new AudioClip(BoggleGUI.class.getResource("indoors.wav").toExternalForm());
         sound.play();
+
+
         new Thread(() -> { // keep making sure the song is playing
             while (true) {
                 Boggle.threadSleep(1000);
-                if (!sound.isPlaying()) sound.play();
+                if (!sound.isPlaying()) { // make the song keep playing
+                    sound.play();
+                }
             }
         }).start();
     }

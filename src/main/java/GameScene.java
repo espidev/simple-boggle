@@ -53,22 +53,28 @@ public class GameScene {
 
     private static StackPane stackContainer = new StackPane(); // root game container
 
-    // show the message on a pink rectangle in front of the game
+    // helper method to show the message on a pink rectangle in front of the game
     public static void showModal(String message, int seconds, Runnable runAfter) {
         gameFreeze = true;
-        modalText.setText(message);
+        modalText.setText(message); // make sure text is set with parameter
+
+        // fade in the modal
         FadeTransition ft = new FadeTransition(Duration.millis(500), modal);
         ft.setFromValue(0);
         ft.setToValue(1.0);
-        ft.play();
-        stackContainer.getChildren().add(modal);
+        ft.play(); // start transistion
+        stackContainer.getChildren().add(modal); // add the modal after to the scene
 
-        new Thread(() -> {
-            Boggle.threadSleep(1000 * seconds);
+        new Thread(() -> { // remove modal later without blocking jfx thread
+            Boggle.threadSleep(1000 * seconds); // wait before removing
+
+            // fade out transition
             ft.setFromValue(1);
             ft.setToValue(0);
             ft.play();
             Boggle.threadSleep(500);
+
+            // remove the modal from the scene
             Platform.runLater(() -> stackContainer.getChildren().remove(modal));
             gameFreeze = false;
             runAfter.run();
@@ -79,14 +85,17 @@ public class GameScene {
     private static void startTimer(Text countdown) {
         // countdown on separate thread
         new Thread(() -> {
+
             String currentPlayerName = Boggle.getCurrentPlayer().getName();
 
             // loop seconds down
             for (GameScene.countdownSeconds = Boggle.maxTimePerTurn; countdownSeconds >= 0; countdownSeconds--) {
                 Boggle.threadSleep(1000); // wait for a second
+
                 try { // check if the current pass has ended already
-                    if (!currentPlayerName.equals(Boggle.getCurrentPlayer().getName()))
+                    if (!currentPlayerName.equals(Boggle.getCurrentPlayer().getName())) {
                         return;
+                    }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
                 // change text
@@ -94,6 +103,11 @@ public class GameScene {
             }
             // countdown has ended
             Platform.runLater(() -> {
+                if (Boggle.players.size() == 1) { // if single player mode, exit game
+                    Boggle.winGame(Boggle.getCurrentPlayer());
+                    return;
+                }
+
                 if (!Boggle.players.isEmpty()) { // go to the next turn if the game hasn't ended
                     Boggle.nextTurn();
                 }

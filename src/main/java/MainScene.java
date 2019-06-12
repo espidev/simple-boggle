@@ -47,9 +47,10 @@ public class MainScene {
             SetupScene.currentPlayer = 0; // reset player to 0
             BoggleGUI.stage.setScene(SetupScene.getScene());
         });
-        play.setDefaultButton(true);
+        play.setDefaultButton(true); // when user presses enter press this button
         settings.setOnAction(e -> BoggleGUI.stage.setScene(SettingsScene.getScene())); // change to settings scene if settings button is pressed
 
+        // add components to layout
         pane.getChildren().addAll(t, new Text(), play, new Text(), settings);
 
         BoggleGUI.initSceneTheme(pane);
