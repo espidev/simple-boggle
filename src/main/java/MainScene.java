@@ -4,7 +4,6 @@ import javafx.geometry.Pos;                                                     
 import javafx.scene.Scene;                                                                          // importing required libraries
 import javafx.scene.control.Button;                                                                 // importing required libraries
 import javafx.scene.layout.VBox;                                                                    // importing required libraries
-import javafx.scene.text.Font;                                                                      // importing required libraries
 import javafx.scene.text.Text;                                                                      // importing required libraries
 
 /*
@@ -54,7 +53,7 @@ public class MainScene {
         pane.getChildren().addAll(t, new Text(), play, new Text(), settings);
 
         BoggleGUI.initSceneTheme(pane);
-        return new Scene(pane, 256, 256); // setting the size of the scene as 256x256 pixels
+        return new Scene(pane, 300, 300); // setting the size of the scene as 256x256 pixels
     }
 
 }

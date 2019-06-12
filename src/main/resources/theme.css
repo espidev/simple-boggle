@@ -14,7 +14,7 @@
 }
 
 .root {
-    -fx-font: 12pt Nunito;
+    -fx-font: 16pt Nunito;
 }
 
 .item-title {
@@ -39,7 +39,7 @@
     -fx-background-color: #e91e63;
 
     -fx-font-family: Nunito, "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 12pt;
+    -fx-font-size: 16pt;
     -fx-text-fill: white;
     -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);
 }
@@ -319,7 +319,7 @@
  ******************************************************************************/
 
 .scroll-bar .thumb {
-    -fx-background-color: #cdcdcd;
+    -fx-background-color: #e91e63;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
@@ -408,13 +408,16 @@
  ******************************************************************************/
 
 .scroll-pane {
-    -fx-background-color: transparent, -fx-background;
+    -fx-background-color: white, #FFFFFF;
 }
 
 .scroll-pane .corner {
-    -fx-background-color: white, #f0f0f0;
+    -fx-background-color: white, #FFFFFF;
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
 
 .spinner {
     -fx-effect: dropshadow(three-pass-box, #e91e63, 5, 0, 0, 0);

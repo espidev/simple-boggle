@@ -67,6 +67,6 @@ public class SetupScene {
         pane.setAlignment(Pos.CENTER);
 
         BoggleGUI.initSceneTheme(pane); // initialize our theme palette
-        return new Scene(pane, 350, 256);
+        return new Scene(pane, 450, 256);
     }
 }

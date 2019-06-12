@@ -173,6 +173,8 @@ public class Boggle {
         System.out.println("Handling " + p.getName() + "'s turn.");
         System.out.println("Score: " + p.getScore());
 
+        GameScene.numberOfPasses = 0; // reset number of consecutive passes
+
         if (p.getScore() >= pointsToPlay) { // if player has enough points to win, win
             winGame(p);
         } else { // otherwise, go to next player's turn
@@ -206,6 +208,7 @@ public class Boggle {
 
         // reset variables
         currentPlayerIndex = 0;
+        GameScene.numberOfPasses = 0;
         GameScene.currentRound = 1;
         GameScene.firstRun = true;
 

@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -38,11 +39,12 @@ import javafx.util.Duration;
 
 public class GameScene {
 
-    private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 500;
+    private static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 500;
     public static boolean firstRun = false;
 
     public static int countdownSeconds; // value on the timer clock
-    public static int currentRound = 1;
+    public static int currentRound = 1; // current round we are on
+    public static int numberOfPasses = 0; // number of consecutive passes that have happened
     public static boolean gameFreeze = false; // whether or not input should be taken (word)
 
     private static GridPane charGrid = new GridPane(); // grid pane, storing the GUI for the board
@@ -110,6 +112,7 @@ public class GameScene {
                 }
 
                 if (!Boggle.players.isEmpty()) { // go to the next turn if the game hasn't ended
+                    numberOfPasses++; // counts as pass
                     Boggle.nextTurn();
                 }
             });
@@ -223,23 +226,59 @@ public class GameScene {
         right.getChildren().add(countdown); // add countdown clock to GUI
 
         // show player list
-        Text title = new Text("Players");
-        title.setFont(Font.font("Nunito", FontWeight.BLACK, 18));
-        title.setFill(Color.WHITE);
-        right.getChildren().add(title);
+        Text pTitle = new Text("Players");
+        pTitle.setFont(Font.font("Nunito", FontWeight.BLACK, 22));
+        pTitle.setFill(Color.WHITE);
+        right.getChildren().add(pTitle);
 
         // loop over to players and add to player list
         for (Player p : Boggle.players) {
             Text t;
             if (p.getName().equals(Boggle.getCurrentPlayer().getName())) { // if it's this player's turn
                 t = new Text(p.getName() + ": " + p.getScore() + " ←");
-                t.setFont(Font.font("Nunito", FontWeight.BOLD, 18));
+                t.setFont(Font.font("Nunito", FontWeight.BOLD, 22));
             } else { // normal player
                 t = new Text(p.getName() + ": " + p.getScore());
             }
             t.setFill(Color.WHITE);
             right.getChildren().add(t);
         }
+
+        // ~~~~~~
+        BorderPane leftContainer = new BorderPane();
+        leftContainer.setPadding(new Insets(15));
+        leftContainer.setStyle("-fx-text-fill: #e91e63; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, #e91e63, 10, 0, 0, 0);");
+        container.setLeft(leftContainer);
+
+        // left elements
+        VBox left = new VBox();
+        leftContainer.setCenter(left);
+        left.setSpacing(8);
+
+        // used words
+        Text uTitle = new Text("Used Words");
+        uTitle.setFont(Font.font("Nunito", FontWeight.BLACK, 22));
+        uTitle.setFill(Color.web("#e91e63"));
+        left.getChildren().add(uTitle);
+
+        // scroll pane to hold words
+        ScrollPane words = new ScrollPane();
+        words.setStyle("-fx-color: white; -fx-background-color: white;");
+        left.getChildren().add(words);
+        String scrollContent = "";
+        for (String word : Boggle.getCurrentPlayer().getUsedWords()) {
+            scrollContent += word + "\n";
+        }
+        words.setContent(new Text(scrollContent));
+
+        // exit game button
+        Button exit = new Button("Exit Game");
+        exit.setAlignment(Pos.CENTER);
+        exit.setOnAction(e -> {
+            Boggle.players.clear();
+            BoggleGUI.stage.setScene(MainScene.getScene());
+        });
+        leftContainer.setBottom(exit);
 
         // ~~~~~~
         // bottom elements
@@ -251,6 +290,7 @@ public class GameScene {
 
         // input field for word
         TextField word = new TextField();
+        Platform.runLater(word::requestFocus); // highlight
         // highlight letters that player is typing
         if (Boggle.highlightAsYouType) {
             word.setOnKeyReleased(e -> highlightOnType(word.getText()));
@@ -265,11 +305,21 @@ public class GameScene {
         });
         submit.setDefaultButton(true); // pressing enter will trigger this button
 
+        // pass button
+        Button pass = new Button("Pass");
+        pass.setOnAction(e -> {
+           if (!gameFreeze) { // go to next turn when clicked
+               numberOfPasses++; // counts as a pass
+               Boggle.nextTurn();
+           }
+        });
+
         Button shakeBoard = new Button("Shake Board");
         // when player wants to shake up board
         shakeBoard.setOnAction(e -> {
             if (!gameFreeze) {
                 currentRound = 1; // reset round timer
+                numberOfPasses = 0;
                 bottom.getChildren().remove(shakeBoard); // remove button
                 Boggle.generateBoard(); // generate a new board
                 highlightOnType(word.getText()); // render the new board
@@ -277,10 +327,10 @@ public class GameScene {
         });
 
         // if the correct number of rounds passes, add shake board button
-        if (Boggle.allowShakeBoard && currentRound > Boggle.roundsUntilAllowShakeBoard) {
-            bottom.getChildren().addAll(word, submit, shakeBoard);
+        if (Boggle.allowShakeBoard && numberOfPasses >= Boggle.players.size()*2) {
+            bottom.getChildren().addAll(word, submit, pass, shakeBoard);
         } else {
-            bottom.getChildren().addAll(word, submit);
+            bottom.getChildren().addAll(word, submit, pass);
         }
 
         // ~~~~~~

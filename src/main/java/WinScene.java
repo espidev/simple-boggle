@@ -85,6 +85,6 @@ class WinScene {
         }
 
         BoggleGUI.initSceneTheme(pane);
-        return new Scene(pane, 350, 300);
+        return new Scene(pane, 350, 400);
     }
 }

@@ -99,6 +99,6 @@ public class SettingsScene {
         pane.add(save, 1, 16);
 
         BoggleGUI.initSceneTheme(pane);
-        return new Scene(pane, 500, 400);
+        return new Scene(pane, 700, 500);
     }
 }
