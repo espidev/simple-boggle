@@ -61,7 +61,7 @@ public class Player implements Comparable<Player> {
     }
 
     public HashSet<String> getUsedWords() {
-        return usedWords;
+        return usedWords; //return used words
     }
 
     // custom comparator for Collections.sort()
