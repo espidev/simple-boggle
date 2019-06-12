@@ -37,9 +37,11 @@ public class SettingsScene {
             roundsUntilAllowShakeBoard = buildSpinner(1, 10000, Boggle.roundsUntilAllowShakeBoard);
 
         CheckBox highlightAsYouType = new CheckBox(),
-                allowShakeBoard = new CheckBox();
+                allowShakeBoard = new CheckBox(),
+                allowDuplicateBetweenPlayers = new CheckBox();
         highlightAsYouType.setSelected(Boggle.highlightAsYouType);
         allowShakeBoard.setSelected(Boggle.allowShakeBoard);
+        allowDuplicateBetweenPlayers.setSelected(Boggle.allowDuplicateWordsBetweenPlayers);
 
         // creating the panes and setting the position of the panes
         pane.add(new Text("Points to play:"), 0, 0);
@@ -56,6 +58,8 @@ public class SettingsScene {
         pane.add(highlightAsYouType, 1, 10);
         pane.add(new Text("Allow shaking of board:"), 0, 12);
         pane.add(allowShakeBoard, 1, 12);
+        pane.add(new Text("Allow duplicate words between players:"), 0, 14);
+        pane.add(allowDuplicateBetweenPlayers, 1, 14);
 
         // creating save button
         Button save = new Button("Save");
@@ -69,12 +73,13 @@ public class SettingsScene {
             Boggle.roundsUntilAllowShakeBoard = roundsUntilAllowShakeBoard.getValue();
             Boggle.highlightAsYouType = highlightAsYouType.isSelected();
             Boggle.allowShakeBoard = allowShakeBoard.isSelected();
+            Boggle.allowDuplicateWordsBetweenPlayers = allowDuplicateBetweenPlayers.isSelected();
             BoggleGUI.stage.setScene(MainScene.getScene());
         });
         save.setDefaultButton(true);
 
         // creating save button pane and setting position of the pane\
-        pane.add(save, 1, 14);
+        pane.add(save, 1, 16);
 
         BoggleGUI.initSceneTheme(pane);
         return new Scene(pane, 500, 400);

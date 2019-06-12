@@ -39,7 +39,7 @@ public class Boggle {
 
     // game variables (configurable)
     public static int minimumWordLength = 3, pointsToPlay = 100, numberOfPlayers = 2, currentPlayerIndex = 0, maxTimePerTurn = 20, roundsUntilAllowShakeBoard = 2;
-    public static boolean highlightAsYouType = true, allowShakeBoard = true;
+    public static boolean highlightAsYouType = true, allowShakeBoard = true, allowDuplicateWordsBetweenPlayers = false;
 
     public static char[][] board = new char[BOARD_SIZE][BOARD_SIZE]; // the characters in each spot on the board
     public static ArrayList<Player> players = new ArrayList<>(); // the players in the game
@@ -112,7 +112,18 @@ public class Boggle {
         Player p = getCurrentPlayer();
 
         // checks
-        if (p.isUsedWord(word)) {
+
+        boolean isUsed = false;
+        if (!Boggle.allowDuplicateWordsBetweenPlayers) {
+            for (Player ps : Boggle.players) {
+                if (ps.isUsedWord(word)) {
+                    isUsed = true;
+                    break;
+                }
+            }
+        }
+
+        if (p.isUsedWord(word) || isUsed) {
             System.out.println("Word already used!");
             GameScene.showModal("Word already used!\nTry again!", 1, ()->{});
             BoggleGUI.playSound("nope.wav");
@@ -171,7 +182,12 @@ public class Boggle {
 
         // index words in our hashset
         try {
-            Scanner s = new Scanner(new File("./wordlist.txt"));
+            File file = new File("./wordlist.txt");
+            if (!file.exists()) {
+                file = new File(Boggle.class.getResource("wordlist.txt").getFile());
+            }
+
+            Scanner s = new Scanner(file);
             while (s.hasNext())
                 validWords.add(s.nextLine());
         } catch (FileNotFoundException e) {

@@ -58,9 +58,15 @@ public class BoggleGUI  extends Application {
         stage.show(); // show the main GUI
 
         // play game song
-        MediaPlayer s = new MediaPlayer(new Media(BoggleGUI.class.getResource("indoors.wav").toExternalForm()));
-        s.setOnEndOfMedia(() -> s.seek(Duration.ZERO)); // repeat at end of song
-        s.play();
+
+        AudioClip sound = new AudioClip(BoggleGUI.class.getResource("indoors.wav").toExternalForm());
+        sound.play();
+        new Thread(() -> { // keep making sure the song is playing
+            while (true) {
+                Boggle.threadSleep(1000);
+                if (!sound.isPlaying()) sound.play();
+            }
+        }).start();
     }
 
     public static void main(String[] args) {
